@@ -6,6 +6,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+       - uses: actions/checkout@v2
+       - run: sudo apt-get install pandoc
        - run: pip install nbconvert
-       - uses: actions/checkout
-       - run: python -m nbconvert lab1/pint_and_boiling_point.ipynb
+       - run: python -m nbconvert --to pdf lab1/pint_and_boiling_point.ipynb
