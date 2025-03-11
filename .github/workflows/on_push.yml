@@ -1,9 +1,10 @@
-name: Python CICD
-run-name: ${{ github.actor }} triggered workflor ${{ github.workflow }} from branch ${{ github.ref }}
+name: lab1
+
 on: [push, pull_request]
+
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        run: echo "Hello World"
+       - run: pip install nbconvert
+       - run: python -m nbconvert lab1/pint_and_boiling_point.ipynb
