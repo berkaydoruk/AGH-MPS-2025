@@ -1,0 +1,9 @@
+name: Python CICD
+run-name: ${{ github.actor }} triggered workflor ${{ github.workflow }} from branch ${{ github.ref }}
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        run: echo "Hello World"
