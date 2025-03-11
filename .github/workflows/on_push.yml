@@ -1,10 +1,11 @@
 name: lab1
 
-on: [push, pull_request]
+on: push
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
        - run: pip install nbconvert
+       - uses: actions/checkout
        - run: python -m nbconvert lab1/pint_and_boiling_point.ipynb
