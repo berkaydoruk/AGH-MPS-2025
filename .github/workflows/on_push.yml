@@ -7,6 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
        - uses: actions/checkout@v2
-       - run: sudo apt-get install pandoc inkscape texlive-xelatex
+       - run: sudo apt-get install pandoc inkscape texlive-xetex
        - run: pip install nbconvert
        - run: python -m nbconvert --to pdf pint_and_boiling_point.ipynb
