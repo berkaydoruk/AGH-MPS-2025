@@ -9,7 +9,7 @@ jobs:
        - uses: actions/checkout@v2
        - run: sudo apt-get install pandoc inkscape texlive-xetex
        - run: pip install pint nbconvert latex ipykernel pint matplotlib scipy numpy open-atmos-jupyter-utils
-       - run: python -m nbconvert --to pdf --execute ./lab_02/lab2.ipynb
+       - run: python -m nbconvert --to pdf --execute ./lab_02/MPS-LAB.ipynb
        - uses: actions/upload-artifact@v4
          with:
-          path: lab_02/lab2.pdf
+          path: lab_02/MPS-LAB.pdf
