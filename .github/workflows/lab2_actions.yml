@@ -1,15 +1,30 @@
-name: lab2
+name: Generate and Upload Lab2 Report
 
-on: push
+on: [push]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
-       - uses: actions/checkout@v2
-       - run: sudo apt-get install pandoc inkscape texlive-xetex
-       - run: pip install pint nbconvert latex ipykernel pint matplotlib scipy numpy open-atmos-jupyter-utils
-       - run: python -m nbconvert --to pdf --execute ./lab_02/MPS-LAB.ipynb
-       - uses: actions/upload-artifact@v4
-         with:
-          path: lab_02/MPS-LAB.pdf
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc inkscape texlive-xetex texlive-fonts-recommended texlive-latex-extra
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pint matplotlib numpy nbconvert
+
+      - name: Convert Jupyter Notebook to PDF
+        run: |
+          jupyter nbconvert --to pdf --execute ./lab_02/MPS-LAB.ipynb --output-dir ./lab_02/
+
+      - name: Upload PDF as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab-report
+          path: ./lab_02/MPS-LAB.pdf
