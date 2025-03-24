@@ -17,7 +17,7 @@ jobs:
       - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pint matplotlib numpy nbconvert
+          pip install pint matplotlib numpy nbconvert ipykernel
 
       - name: Convert Jupyter Notebook to PDF
         run: |
