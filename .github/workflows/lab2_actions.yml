@@ -23,6 +23,14 @@ jobs:
         run: |
           jupyter nbconvert --to pdf --execute ./lab_02/MPS-LAB.ipynb --output-dir ./lab_02/
 
+      - name: Commit PDF to repository
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git add ./lab_02/MPS-LAB.pdf
+          git commit -m "Add generated lab report"
+          git push
+          
       - name: Upload PDF as artifact
         uses: actions/upload-artifact@v4
         with:
