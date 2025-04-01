@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'lab_03/**'
+      - '.github/workflows/lab3_actions.yml'
 
 jobs:
   build:
@@ -34,9 +35,9 @@ jobs:
         run: |
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
-          git pull --rebase origin main
           git add ./lab_03/lab3.pdf
           git commit -m "Add generated lab report" || echo "No changes to commit"
+          git pull --rebase origin main
           git push
           
       - name: Upload PDF as artifact
