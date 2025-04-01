@@ -1,6 +1,11 @@
 name: Generate and Upload Lab2 Report
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lab_02/**'
 
 jobs:
   build:

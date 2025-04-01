@@ -1,6 +1,11 @@
 name: Generate and Upload Lab3 Report
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lab_03/**'
 
 jobs:
   build:
@@ -27,6 +32,7 @@ jobs:
         run: |
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
+          git pull --rebase origin main
           git add ./lab_03/lab3.pdf
           git commit -m "Add generated lab report"
           git push
