@@ -12,6 +12,6 @@ Scoring:
 - 20% Python script implementing the analytic solution
 - 20% choice of parameters and their units
 - 20% Python script creating the plot with units automatically handled by pint
-- 20% automation leading to vector graphics plot embedded in the pdf uploaded as artifact
+- 20% automation leading to vector graphics plot embedded in the pdf uploaded as artifact.
 
 Submission: sending the location of the repository by e-mail to sylwester.arabas@agh.edu.pl
