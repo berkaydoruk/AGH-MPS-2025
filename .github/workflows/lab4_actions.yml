@@ -1,4 +1,4 @@
-name: Generate and Upload Lab3 Report
+name: Generate and Upload Lab4 Report
 
 on:
   push:
@@ -37,7 +37,9 @@ jobs:
           git config --local user.email "github-actions@github.com"
           git add ./lab_04/lab4.pdf
           git commit -m "Add generated lab report" || echo "No changes to commit"
+          git stash --include-untracked
           git pull --rebase origin main
+          git stash pop || echo "Nothing to pop"
           git push
           
       - name: Upload PDF as artifact
