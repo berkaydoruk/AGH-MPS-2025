@@ -1,0 +1,47 @@
+name: Generate and Upload Lab3 Report
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lab_04/**'
+      - '.github/workflows/lab4_actions.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc inkscape texlive-xetex texlive-fonts-recommended texlive-latex-extra
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pint matplotlib numpy nbconvert ipykernel
+
+      - name: Convert Jupyter Notebook to PDF
+        run: |
+          jupyter nbconvert --to pdf --execute ./lab_04/lab4.ipynb --output-dir ./lab_04/
+
+      - name: Commit PDF to repository
+        run: |
+          git config --local user.name "github-actions"
+          git config --local user.email "github-actions@github.com"
+          git add ./lab_04/lab4.pdf
+          git commit -m "Add generated lab report" || echo "No changes to commit"
+          git pull --rebase origin main
+          git push
+          
+      - name: Upload PDF as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab-report
+          path: ./lab_04/lab4.pdf
