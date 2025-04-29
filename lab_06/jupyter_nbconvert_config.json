@@ -1,7 +1,7 @@
 {
     "TemplateExporter": {
-      "template_file": "mytemplate",
-      "template_path": ["lab_06/templates"],
+      "template_name": "mytemplate",
+      "extra_template_paths": ["lab_06/templates"],
       "exclude_input_prompt": true,
       "exclude_output_prompt": true,
       "exclude_input": false
