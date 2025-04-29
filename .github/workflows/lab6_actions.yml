@@ -1,12 +1,12 @@
-name: Generate and Upload Lab5 Report
+name: Generate and Upload Lab6 Report
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'lab_05/**'
-      - '.github/workflows/lab5_actions.yml'
+      - 'lab_06/**'
+      - '.github/workflows/lab6_actions.yml'
 
 jobs:
   build:
