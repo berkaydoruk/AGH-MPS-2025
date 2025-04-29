@@ -34,7 +34,7 @@ jobs:
 
       - name: Run Pylint on notebook-converted script
         run: |
-          jupyter nbconvert --to python ./lab_06/lab6.ipynb --output ./lab_06/lab6_script.py
+          jupyter nbconvert --to python ./lab_06/lab6.ipynb --output lab6_script --output-dir ./lab_06/
           pylint ./lab_06/lab6_script.py > ./lab_06/pylint_report.txt || true
 
       - name: Convert Pylint report to PDF
