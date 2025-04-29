@@ -32,24 +32,26 @@ jobs:
         run: |
           jupyter nbconvert --to pdf --execute ./lab_06/lab6.ipynb --output-dir ./lab_06/
 
-      - name: Run Pylint on notebook-converted script
+      - name: Convert notebook to script for Pylint
         run: |
           jupyter nbconvert --to python ./lab_06/lab6.ipynb --output lab6_script --output-dir ./lab_06/
+          # Clean auto-generated .py to avoid trailing whitespace warnings
+          sed -i 's/[ \t]*$//' ./lab_06/lab6_script.py
+          sed -i '${/^$/d;}' ./lab_06/lab6_script.py
+
+      - name: Run Pylint
+        run: |
           pylint ./lab_06/lab6_script.py > ./lab_06/pylint_report.txt || true
 
-      - name: Convert Pylint report to PDF
+      - name: Convert Pylint report to PDF (smaller font)
         run: |
-          pandoc ./lab_06/pylint_report.txt -o ./lab_06/pylint_report.pdf
-
-      - name: Combine lab report PDF and Pylint report PDF
-        run: |
-          pdfunite ./lab_06/lab6.pdf ./lab_06/pylint_report.pdf ./lab_06/lab6_full.pdf
+          pandoc ./lab_06/pylint_report.txt -V fontsize=10pt -o ./lab_06/pylint_report.pdf
 
       - name: Commit PDFs to repository
         run: |
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
-          git add ./lab_06/lab6.pdf ./lab_06/pylint_report.pdf ./lab_06/lab6_full.pdf
+          git add ./lab_06/lab6.pdf ./lab_06/pylint_report.pdf
           git commit -m "Add generated lab report and Pylint PDF" || echo "No changes to commit"
           git stash --include-untracked
           git pull --rebase origin main
@@ -59,8 +61,7 @@ jobs:
       - name: Upload PDFs as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lab6-all-pdfs
+          name: lab6-reports
           path: |
             ./lab_06/lab6.pdf
             ./lab_06/pylint_report.pdf
-            ./lab_06/lab6_full.pdf
