@@ -39,7 +39,8 @@ jobs:
           --TemplateExporter.exclude_input_prompt=True \
           --TemplateExporter.exclude_output_prompt=True \
           --TemplateExporter.exclude_input=False \
-          --template-file ./lab_06/lab6_template.tplx
+          --template mytemplate \
+          --template-path=lab_06/templates
 
     - name: Optimise lab PDF
       run: |
