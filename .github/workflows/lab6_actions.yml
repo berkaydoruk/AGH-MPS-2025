@@ -11,6 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,7 +21,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc inkscape texlive-xetex texlive-fonts-recommended texlive-latex-extra
+          sudo apt-get install -y pandoc inkscape texlive-xetex texlive-fonts-recommended texlive-latex-extra poppler-utils
 
       - name: Install Python dependencies
         run: |
@@ -31,19 +32,35 @@ jobs:
         run: |
           jupyter nbconvert --to pdf --execute ./lab_06/lab6.ipynb --output-dir ./lab_06/
 
-      - name: Commit PDF to repository
+      - name: Run Pylint on notebook-converted script
+        run: |
+          jupyter nbconvert --to python ./lab_06/lab6.ipynb --output ./lab_06/lab6_script.py
+          pylint ./lab_06/lab6_script.py > ./lab_06/pylint_report.txt || true
+
+      - name: Convert Pylint report to PDF
+        run: |
+          pandoc ./lab_06/pylint_report.txt -o ./lab_06/pylint_report.pdf
+
+      - name: Combine lab report PDF and Pylint report PDF
+        run: |
+          pdfunite ./lab_06/lab6.pdf ./lab_06/pylint_report.pdf ./lab_06/lab6_full.pdf
+
+      - name: Commit PDFs to repository
         run: |
           git config --local user.name "github-actions"
           git config --local user.email "github-actions@github.com"
-          git add ./lab_06/lab6.pdf
-          git commit -m "Add generated lab report" || echo "No changes to commit"
+          git add ./lab_06/lab6.pdf ./lab_06/pylint_report.pdf ./lab_06/lab6_full.pdf
+          git commit -m "Add generated lab report and Pylint PDF" || echo "No changes to commit"
           git stash --include-untracked
           git pull --rebase origin main
           git stash pop || echo "Nothing to pop"
           git push
-          
-      - name: Upload PDF as artifact
+
+      - name: Upload PDFs as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: lab-report
-          path: ./lab_06/lab6.pdf
+          name: lab6-all-pdfs
+          path: |
+            ./lab_06/lab6.pdf
+            ./lab_06/pylint_report.pdf
+            ./lab_06/lab6_full.pdf
