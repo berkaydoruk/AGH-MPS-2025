@@ -75,9 +75,15 @@ jobs:
       run: |
         git config --local user.name  "github-actions"
         git config --local user.email "github-actions@github.com"
+        
+        # Stash everything first to avoid conflict with pull --rebase
+        git stash --include-untracked
+
+        git pull --rebase origin main || echo "Non-fast-forward pull skipped"
+        git stash pop || echo "Nothing to pop"
+
         git add ./lab_06/lab6.pdf ./lab_06/pylint_report.pdf
         git commit -m "Add optimised Lab 6 report PDFs" || echo "No changes to commit"
-        git pull --rebase origin main
         git push
 
     - name: Upload PDFs as artifact
