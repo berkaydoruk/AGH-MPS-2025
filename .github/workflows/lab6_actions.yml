@@ -33,14 +33,12 @@ jobs:
 
     - name: Execute notebook and export raw PDF with custom template
       run: |
-        jupyter nbconvert --to pdf --execute ./lab_06/lab6.ipynb \
+        jupyter nbconvert \
+          --config lab_06/jupyter_nbconvert_config.json \
+          --to pdf \
+          --execute lab_06/lab6.ipynb \
           --output lab6_raw.pdf \
-          --output-dir ./lab_06/ \
-          --TemplateExporter.exclude_input_prompt=True \
-          --TemplateExporter.exclude_output_prompt=True \
-          --TemplateExporter.exclude_input=False \
-          --template mytemplate \
-          --template-path=lab_06/templates
+          --output-dir lab_06/
 
     - name: Optimise lab PDF
       run: |
