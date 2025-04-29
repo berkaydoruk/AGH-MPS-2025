@@ -13,55 +13,76 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y pandoc inkscape texlive-xetex texlive-fonts-recommended texlive-latex-extra poppler-utils
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          pandoc inkscape ghostscript pdfjam \
+          texlive-xetex texlive-fonts-recommended texlive-latex-extra
 
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pylint pint scipy matplotlib numpy nbconvert ipykernel
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pylint pint scipy matplotlib numpy nbconvert ipykernel
 
-      - name: Convert Jupyter Notebook to PDF
-        run: |
-          jupyter nbconvert --to pdf --execute ./lab_06/lab6.ipynb --output-dir ./lab_06/
+    - name: Execute notebook and export raw PDF
+      run: |
+        jupyter nbconvert --to pdf --execute ./lab_06/lab6.ipynb \
+          --output lab6_raw.pdf \
+          --output-dir ./lab_06/ \
+          --TemplateExporter.exclude_input_prompt=True \
+          --TemplateExporter.exclude_output_prompt=True \
+          --TemplateExporter.exclude_input=False   # show code; set True to hide
 
-      - name: Convert notebook to script for Pylint
-        run: |
-          jupyter nbconvert --to python ./lab_06/lab6.ipynb --output lab6_script --output-dir ./lab_06/
-          # Clean auto-generated .py to avoid trailing whitespace warnings
-          sed -i 's/[ \t]*$//' ./lab_06/lab6_script.py
-          sed -i '${/^$/d;}' ./lab_06/lab6_script.py
+    - name: Optimise lab PDF
+      run: |
+        gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \
+           -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH \
+           -sOutputFile=./lab_06/lab6_gs.pdf ./lab_06/lab6_raw.pdf
+        pdfjam --outfile ./lab_06/lab6.pdf --paper a4paper \
+               --scale 0.9 ./lab_06/lab6_gs.pdf
+        rm ./lab_06/lab6_raw.pdf ./lab_06/lab6_gs.pdf
 
-      - name: Run Pylint
-        run: |
-          pylint ./lab_06/lab6_script.py > ./lab_06/pylint_report.txt || true
+    - name: Convert notebook to script for Pylint
+      run: |
+        jupyter nbconvert --to python ./lab_06/lab6.ipynb \
+          --output lab6_script --output-dir ./lab_06/
+        # strip trailing spaces / final blank lines
+        sed -i 's/[ \t]*$//' ./lab_06/lab6_script.py
+        sed -i '${/^$/d;}'      ./lab_06/lab6_script.py
 
-      - name: Convert Pylint report to PDF (smaller font)
-        run: |
-          pandoc ./lab_06/pylint_report.txt -V fontsize=10pt -o ./lab_06/pylint_report.pdf
+    - name: Run Pylint
+      run: |
+        pylint ./lab_06/lab6_script.py > ./lab_06/pylint_report.txt || true
 
-      - name: Commit PDFs to repository
-        run: |
-          git config --local user.name "github-actions"
-          git config --local user.email "github-actions@github.com"
-          git add ./lab_06/lab6.pdf ./lab_06/pylint_report.pdf
-          git commit -m "Add generated lab report and Pylint PDF" || echo "No changes to commit"
-          git stash --include-untracked
-          git pull --rebase origin main
-          git stash pop || echo "Nothing to pop"
-          git push
+    - name: Convert & optimise Pylint report PDF
+      run: |
+        pandoc ./lab_06/pylint_report.txt -V fontsize=10pt \
+               -o ./lab_06/pylint_report_raw.pdf
+        gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.4 \
+           -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH \
+           -sOutputFile=./lab_06/pylint_report.pdf \
+           ./lab_06/pylint_report_raw.pdf
+        rm ./lab_06/pylint_report_raw.pdf
 
-      - name: Upload PDFs as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: lab6-reports
-          path: |
-            ./lab_06/lab6.pdf
-            ./lab_06/pylint_report.pdf
+    - name: Commit PDFs to repository
+      run: |
+        git config --local user.name  "github-actions"
+        git config --local user.email "github-actions@github.com"
+        git add ./lab_06/lab6.pdf ./lab_06/pylint_report.pdf
+        git commit -m "Add optimised Lab 6 report PDFs" || echo "No changes to commit"
+        git pull --rebase origin main
+        git push
+
+    - name: Upload PDFs as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: lab6-reports
+        path: |
+          ./lab_06/lab6.pdf
+          ./lab_06/pylint_report.pdf
