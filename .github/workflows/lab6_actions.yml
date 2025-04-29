@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'lab_06/**'
+      - 'lab_06/lab6.ipynb'
       - '.github/workflows/lab6_actions.yml'
 
 jobs:

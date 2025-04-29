@@ -1,0 +1,27 @@
+((*- extends 'article.tplx' -*))
+
+((* block documentclass *))
+\documentclass[10pt,a4paper]{article}
+((* endblock documentclass *))
+
+((* block packages *))
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{geometry}
+\geometry{
+  top=1.2cm,
+  bottom=1.2cm,
+  left=1.5cm,
+  right=1.5cm
+}
+\pagestyle{empty}
+((* endblock packages *))
+
+((* block header *))
+% no header
+((* endblock header *))
+
+((* block footer *))
+% no footer
+((* endblock footer *))
