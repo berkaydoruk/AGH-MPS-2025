@@ -22,8 +22,9 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          pandoc inkscape ghostscript pdfjam \
-          texlive-xetex texlive-fonts-recommended texlive-latex-extra
+          pandoc inkscape ghostscript \
+          texlive-xetex texlive-fonts-recommended texlive-latex-extra \
+          texlive-extra-utils
 
     - name: Install Python dependencies
       run: |
